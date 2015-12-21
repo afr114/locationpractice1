@@ -23,6 +23,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     private final String LOG_TAG = "TestApp";
     private GoogleApiClient mGoogleApiClient;
     private LocationRequest mLocationRequest;
+    private Location mlocation;
     @Bind(R.id.locationOutput) TextView txtOutput;
 
     @Override
@@ -50,8 +51,13 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             return;
         }
 
-        LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
-
+        mlocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+        if (mlocation == null) {  LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
+        }
+        else {
+            Log.i(LOG_TAG, mlocation.toString());
+        };
+        String s = "s";
     }
 
     protected void createLocationRequest() {
@@ -63,6 +69,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     @Override
     public void onLocationChanged(Location location) {
         Log.i(LOG_TAG, location.toString());
+        mlocation = location;
         txtOutput.setText(location.toString());
 
     }
@@ -79,8 +86,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
     @Override
     protected void onStart() {
-        mGoogleApiClient.connect();
         super.onStart();
+        mGoogleApiClient.connect();
     }
 
     @Override
